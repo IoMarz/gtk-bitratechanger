@@ -23,20 +23,25 @@ class MainWindow(Gtk.Window):
         self.new_video_birate = Gtk.Entry()
         self.new_video_birate.set_text("<enter video bitrate>")
 
+        # Video type field
+        self.video_type = Gtk.Entry()
+        self.video_type.set_text("<enter type (.mp4, etc)>")
+
         # GO button
         self.go_button = Gtk.Button()
         self.go_button.set_label("GO!")
         self.go_button.connect("clicked", self.go_button_event)
 
-        # Status
+        # Status (reusing this because lazy)
         self.status = Gtk.Label()
-        self.status.set_label("Status: Ready")
+        self.status.set_label("By IoMarz/Skyler")
 
         # Add objects to the grid
         self.grid.add(self.path_to_file)
         self.grid.attach(self.new_video_birate, 1, 0, 2, 1)
-        self.grid.attach_next_to(self.go_button, self.path_to_file, Gtk.PositionType.BOTTOM, 1, 2)
-        #self.grid.attach_next_to(self.status, self.go_button, Gtk.PositionType.BOTTOM, 1, 2)
+        self.grid.attach_next_to(self.video_type, self.path_to_file, Gtk.PositionType.BOTTOM, 1, 2)
+        self.grid.attach_next_to(self.status, self.video_type, Gtk.PositionType.BOTTOM, 1, 2)
+        self.grid.attach_next_to(self.go_button, self.new_video_birate, Gtk.PositionType.BOTTOM, 1, 2)
     
     # GO button event
     def go_button_event(self, widget):
@@ -48,7 +53,8 @@ class MainWindow(Gtk.Window):
             print("going!")
             video_path = self.path_to_file.get_text()
             new_bitrate = self.new_video_birate.get_text() + "k"
-            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + " output.mp4")
+            video_type_str = self.video_type.get_text()
+            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + " output" + video_type_str)
             self.working = False
 
 window = MainWindow()
