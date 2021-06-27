@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
+from datetime import date, datetime
 
 class MainWindow(Gtk.Window):
     def __init__(self):
@@ -54,13 +55,20 @@ class MainWindow(Gtk.Window):
             video_path = self.path_to_file.get_text()
             new_bitrate = self.new_video_birate.get_text()
             video_type_str = self.video_type.get_text()
+            # Get system time for the file to prevent file override
+            now = datetime.now()
+            systime = now.strftime("%H-%M-%S")
+            print(systime)
             # Check if the bitrate is all numbers
             if (new_bitrate.isdigit()):
                 print("bitrate check success!")
             else:
                 print("bitrate is not a number! defaulting to 1000kbs")
                 new_bitrate = "1000"
-            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + "k" + " output" + video_type_str)
+            # Set the out file to a string so i dont get confused lmao
+            out_file = "Out-" + str(systime) + video_type_str
+            # Execute the command
+            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + "k " + out_file)
             self.working = False
 
 window = MainWindow()
