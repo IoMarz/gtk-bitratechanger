@@ -32,15 +32,15 @@ class MainWindow(Gtk.Window):
         self.go_button.set_label("GO!")
         self.go_button.connect("clicked", self.go_button_event)
 
-        # Status (reusing this because lazy)
-        self.status = Gtk.Label()
-        self.status.set_label("By IoMarz/Skyler")
+        # Watermark
+        self.watermark = Gtk.Label()
+        self.watermark.set_label("By IoMarz/Skyler")
 
         # Add objects to the grid
         self.grid.add(self.path_to_file)
         self.grid.attach(self.new_video_birate, 1, 0, 2, 1)
         self.grid.attach_next_to(self.video_type, self.path_to_file, Gtk.PositionType.BOTTOM, 1, 2)
-        self.grid.attach_next_to(self.status, self.video_type, Gtk.PositionType.BOTTOM, 1, 2)
+        self.grid.attach_next_to(self.watermark, self.video_type, Gtk.PositionType.BOTTOM, 1, 2)
         self.grid.attach_next_to(self.go_button, self.new_video_birate, Gtk.PositionType.BOTTOM, 1, 2)
     
     # GO button event
@@ -48,13 +48,19 @@ class MainWindow(Gtk.Window):
         if (self.working == True):
             print("Already on a job!")
         if (self.working == False):
-            #self.status.set_label("Status: Working...")
             self.working = True
             print("going!")
+            # Set input values to a string
             video_path = self.path_to_file.get_text()
-            new_bitrate = self.new_video_birate.get_text() + "k"
+            new_bitrate = self.new_video_birate.get_text()
             video_type_str = self.video_type.get_text()
-            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + " output" + video_type_str)
+            # Check if the bitrate is all numbers
+            if (new_bitrate.isdigit()):
+                print("bitrate check success!")
+            else:
+                print("bitrate is not a number! defaulting to 1000kbs")
+                new_bitrate = "1000"
+            os.system("ffmpeg -i " + video_path + " -b " + new_bitrate + "k" + " output" + video_type_str)
             self.working = False
 
 window = MainWindow()
